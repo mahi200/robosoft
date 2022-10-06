@@ -1,6 +1,7 @@
 package ingov.itd.iec.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +44,7 @@ public class TokenController {
         }
     }
 
-    @GetMapping("/deviceToken/{id}")
+    @GetMapping("/deviceToken/{pan}")
     public ResponseEntity<DeviceToken> geTokenById(@PathVariable("pan") String pan) {
         Optional<DeviceToken> deviceToken = tokenRepository.findById(pan);
 
@@ -66,39 +67,30 @@ public class TokenController {
     }
 
     @PutMapping("/deviceToken/{pan}")
-    public ResponseEntity<DeviceToken> updateDeviceToken(@PathVariable("pan") String pan, @RequestBody DeviceToken deviceToken) {
+    public ResponseEntity<Object> updateDeviceToken(@PathVariable("pan") String pan, @RequestBody DeviceToken deviceToken) {
         Optional<DeviceToken> deviceTokenOptional = tokenRepository.findById(pan);
 
         if (deviceTokenOptional.isPresent()) {
             DeviceToken _deviceToken = deviceTokenOptional.get();
             _deviceToken.setDeviceToken(deviceToken.getDeviceToken());
             _deviceToken.setDeviceType(deviceToken.getDeviceType());
+            _deviceToken.setUpdated(new Date());
             return new ResponseEntity<>(tokenRepository.save(_deviceToken), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("token not found for the pan :"+pan, HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("/deviceToken/{id}")
-    public ResponseEntity<HttpStatus> deleteDeviceToken(@PathVariable("id") String pan) {
+    public ResponseEntity<String> deleteDeviceToken(@PathVariable("id") String pan) {
         try {
             tokenRepository.deleteById(pan);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(" token deleted successful for pan:"+pan,HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("no content found",HttpStatus.NO_CONTENT);
         }
     }
 
-    @DeleteMapping("/deviceToken")
-    public ResponseEntity<HttpStatus> deleteAllDeviceToken() {
-        try {
-            tokenRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-    }
 
 
 }
