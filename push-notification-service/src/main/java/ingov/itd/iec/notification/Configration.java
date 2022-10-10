@@ -7,6 +7,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
@@ -23,4 +24,9 @@ public class Configration {
         FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "my-app");
         return FirebaseMessaging.getInstance(app);
     }
+    @Bean
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate();
+    }
+
 }

@@ -16,9 +16,8 @@ public class PushNotificationController {
 
     @PostMapping("/send-notification")
     @ResponseBody
-    public String sendNotification(@RequestBody Note note,
-                                   @RequestParam String token) throws FirebaseMessagingException {
-        return firebaseMessageingService.sendNotification(note, token);
+    public String sendNotification(@RequestBody Note note) throws FirebaseMessagingException {
+        return firebaseMessageingService.sendNotification(note);
     }
 
 }

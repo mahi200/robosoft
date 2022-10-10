@@ -7,15 +7,17 @@ import com.google.firebase.messaging.Notification;
 import ingov.itd.iec.notification.entity.Note;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class FirebaseMessageingService {
 
     @Autowired
     private FirebaseMessaging firebaseMessaging;
+    @Autowired
+    private TokenService tokenService;
 
-
-    public String sendNotification(Note note, String token) throws FirebaseMessagingException {
+    public String sendNotification(Note note) throws FirebaseMessagingException {
 
         Notification notification = Notification
                 .builder()
@@ -23,6 +25,7 @@ public class FirebaseMessageingService {
                 .setBody(note.getContent())
                 .build();
 
+        String token = tokenService.getToken(note.getPan());
         Message message = Message
                 .builder()
                 .setToken(token)
@@ -32,7 +35,6 @@ public class FirebaseMessageingService {
 
         return firebaseMessaging.send(message);
     }
-
 
 
 }
