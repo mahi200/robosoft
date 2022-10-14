@@ -5,6 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import ingov.itd.iec.notification.entity.Note;
+import ingov.itd.iec.notification.exception.TokenNotFondException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -17,7 +18,7 @@ public class FirebaseMessageingService {
     @Autowired
     private TokenService tokenService;
 
-    public String sendNotification(Note note) throws FirebaseMessagingException {
+    public String sendNotification(Note note) throws FirebaseMessagingException , TokenNotFondException {
 
         Notification notification = Notification
                 .builder()

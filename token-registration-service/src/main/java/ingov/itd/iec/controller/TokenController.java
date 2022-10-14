@@ -87,7 +87,7 @@ public class TokenController {
             tokenRepository.deleteById(pan);
             return new ResponseEntity<>(" token deleted successful for pan:"+pan,HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("no content found",HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("no device token found for pan : "+pan,HttpStatus.NOT_FOUND);
         }
     }
 
