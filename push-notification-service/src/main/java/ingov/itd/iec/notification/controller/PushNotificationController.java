@@ -4,8 +4,7 @@ package ingov.itd.iec.notification.controller;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import ingov.itd.iec.notification.entity.Note;
 import ingov.itd.iec.notification.exception.TokenNotFondException;
-import ingov.itd.iec.notification.service.FirebaseMessageingService;
-import lombok.SneakyThrows;
+import ingov.itd.iec.notification.service.FirebaseMessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class PushNotificationController {
 
     @Autowired
-    FirebaseMessageingService firebaseMessageingService;
+    FirebaseMessagingService firebaseMessageingService;
 
     @PostMapping("/send-notification")
     public ResponseEntity<String> sendNotification(@RequestBody Note note) throws FirebaseMessagingException {
