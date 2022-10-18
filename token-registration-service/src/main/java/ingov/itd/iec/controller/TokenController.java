@@ -1,9 +1,6 @@
 package ingov.itd.iec.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import ingov.itd.iec.entity.DeviceToken;
 import ingov.itd.iec.repository.TokenRepository;
@@ -46,7 +43,7 @@ public class TokenController {
 
     @GetMapping("/deviceToken/{pan}")
     public ResponseEntity<DeviceToken> geTokenById(@PathVariable("pan") String pan) {
-        Optional<DeviceToken> deviceToken = tokenRepository.findById(pan);
+        Optional<DeviceToken> deviceToken = tokenRepository.findById(pan.toUpperCase());
 
         if (deviceToken.isPresent()) {
             return new ResponseEntity<>(deviceToken.get(), HttpStatus.OK);
@@ -58,9 +55,13 @@ public class TokenController {
     @PostMapping("/deviceToken")
     public ResponseEntity<DeviceToken> createDeviceToken(@RequestBody DeviceToken deviceToken) {
         try {
-            DeviceToken _DeviceToken = tokenRepository
-                    .save(new DeviceToken(deviceToken.getPan(), deviceToken.getDeviceToken(), deviceToken.getDeviceType()));
-            return new ResponseEntity<>(_DeviceToken, HttpStatus.CREATED);
+            if (deviceToken.getPan() != null) {
+                DeviceToken _DeviceToken = tokenRepository
+                        .save(new DeviceToken(deviceToken.getPan().toUpperCase(), deviceToken.getDeviceToken(), deviceToken.getDeviceType()));
+                return new ResponseEntity<>(_DeviceToken, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -68,7 +69,7 @@ public class TokenController {
 
     @PutMapping("/deviceToken/{pan}")
     public ResponseEntity<Object> updateDeviceToken(@PathVariable("pan") String pan, @RequestBody DeviceToken deviceToken) {
-        Optional<DeviceToken> deviceTokenOptional = tokenRepository.findById(pan);
+        Optional<DeviceToken> deviceTokenOptional = tokenRepository.findById(pan.toUpperCase());
 
         if (deviceTokenOptional.isPresent()) {
             DeviceToken _deviceToken = deviceTokenOptional.get();
@@ -77,7 +78,7 @@ public class TokenController {
             _deviceToken.setUpdated(new Date());
             return new ResponseEntity<>(tokenRepository.save(_deviceToken), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("token not found for the pan :"+pan, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("token not found for the pan :" + pan, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -85,12 +86,11 @@ public class TokenController {
     public ResponseEntity<String> deleteDeviceToken(@PathVariable("id") String pan) {
         try {
             tokenRepository.deleteById(pan);
-            return new ResponseEntity<>(" token deleted successful for pan:"+pan,HttpStatus.OK);
+            return new ResponseEntity<>(" token deleted successful for pan:" + pan, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("no device token found for pan : "+pan,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("no device token found for pan : " + pan, HttpStatus.NOT_FOUND);
         }
     }
-
 
 
 }
