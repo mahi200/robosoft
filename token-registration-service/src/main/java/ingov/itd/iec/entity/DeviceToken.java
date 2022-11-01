@@ -22,6 +22,7 @@ public class DeviceToken {
     String deviceType;
     Date created;
     Date updated;
+    Boolean topicSubscription;
 
 
     public DeviceToken(String pan, String deviceToken, String deviceType) {

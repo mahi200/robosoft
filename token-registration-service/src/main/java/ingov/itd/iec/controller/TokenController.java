@@ -4,17 +4,11 @@ import java.util.*;
 
 import ingov.itd.iec.entity.DeviceToken;
 import ingov.itd.iec.repository.TokenRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -27,15 +21,15 @@ public class TokenController {
     @GetMapping("/deviceToken")
     public ResponseEntity<List<DeviceToken>> getAllDeviceToken() {
         try {
-            List<DeviceToken> DeviceToken = new ArrayList<DeviceToken>();
+            List<DeviceToken> deviceToken = new ArrayList<DeviceToken>();
 
-            tokenRepository.findAll().forEach(DeviceToken::add);
+            tokenRepository.findAll().forEach(deviceToken::add);
 
-            if (DeviceToken.isEmpty()) {
+            if (deviceToken.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
-            return new ResponseEntity<>(DeviceToken, HttpStatus.OK);
+            return new ResponseEntity<>(deviceToken, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -52,12 +46,19 @@ public class TokenController {
         }
     }
 
+    @GetMapping("/deviceToken/topicSubscription")
+    public ResponseEntity<List<DeviceToken>> getTopicSubscription(@RequestParam(required = false) Boolean topicSubscription)
+
+    {
+        List<DeviceToken> deviceToken = tokenRepository.findByTopicSubscription(topicSubscription);
+        return new ResponseEntity<>(deviceToken, HttpStatus.OK);
+    }
+
     @PostMapping("/deviceToken")
     public ResponseEntity<DeviceToken> createDeviceToken(@RequestBody DeviceToken deviceToken) {
         try {
             if (deviceToken.getPan() != null) {
-                DeviceToken _DeviceToken = tokenRepository
-                        .save(new DeviceToken(deviceToken.getPan().toUpperCase(), deviceToken.getDeviceToken(), deviceToken.getDeviceType()));
+                DeviceToken _DeviceToken = tokenRepository.save(new DeviceToken(deviceToken.getPan().toUpperCase(), deviceToken.getDeviceToken(), deviceToken.getDeviceType()));
                 return new ResponseEntity<>(_DeviceToken, HttpStatus.CREATED);
             } else {
                 return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
